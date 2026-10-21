@@ -10,7 +10,7 @@ APP_NAME = "Sol AI"
 MODEL = os.getenv("GEMINI_MODEL", "gemini-flash-latest")
 API_KEY = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
 
-app = FastAPI(title=APP_NAME, version="1.0.0")
+app = FastAPI(title=APP_NAME, version="1.0.1")
 
 
 class ChatMessage(BaseModel):
@@ -25,7 +25,12 @@ class ChatRequest(BaseModel):
 
 @app.get("/health")
 async def health():
-    return {"status": "ok", "app": APP_NAME, "model": MODEL}
+    return {
+        "status": "ok",
+        "app": APP_NAME,
+        "model": MODEL,
+        "api_key_configured": bool(API_KEY),
+    }
 
 
 @app.get("/", response_class=HTMLResponse)
@@ -82,7 +87,6 @@ async def chat(payload: ChatRequest):
         raise HTTPException(status_code=502, detail="Could not connect to the AI provider.")
 
     if response.status_code >= 400:
-        # Do not expose the secret key or full upstream response to the browser.
         if response.status_code in (401, 403):
             raise HTTPException(status_code=502, detail="The API key was rejected. Check Railway Variables.")
         if response.status_code == 429:
@@ -92,7 +96,7 @@ async def chat(payload: ChatRequest):
     try:
         data = response.json()
         answer = data["candidates"][0]["content"]["parts"]
-        text = "\n".join(part.get("text", "") for part in answer).strip()
+        text = "\\n".join(part.get("text", "") for part in answer).strip()
     except (ValueError, KeyError, IndexError, TypeError):
         raise HTTPException(status_code=502, detail="The AI provider returned an unexpected response.")
 
@@ -101,7 +105,7 @@ async def chat(payload: ChatRequest):
     return {"reply": text, "model": MODEL}
 
 
-PAGE = r"""<!doctype html>
+PAGE = r\"\"\"<!doctype html>
 <html lang="fa" dir="rtl">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
@@ -128,7 +132,7 @@ button{cursor:pointer;background:var(--accent);color:#10162b;font-weight:750;bor
 <body><main>
 <header><div><div class="brand">✦ Sol AI</div><div class="sub">دستیار هوشمند · AI assistant</div></div>
 <select id="lang" aria-label="Language"><option value="auto">خودکار / Auto</option><option value="fa">فارسی / دری</option><option value="en">English</option></select></header>
-<section id="chat" aria-live="polite"><div class="welcome" id="welcome"><strong>سلام! من Sol AI هستم.</strong>هر چیزی می‌خواهی بپرس — Ask me anything.</div></section>
+<section id="chat" aria-live="polite"><div class="welcome" id="welcome"><strong>سلام کاربر عزیز! 👋</strong>من Sol AI هستم. برای آزمایش، پیامت را بنویس. / Hello! Send a message to test.</div></section>
 <div id="error" role="status"></div>
 <form id="form"><div class="entry"><textarea id="prompt" maxlength="12000" placeholder="پیامت را بنویس… / Type your message…" required></textarea><button id="send" type="submit">ارسال</button></div></form>
 <div class="foot">پاسخ‌های هوش مصنوعی ممکن است اشتباه باشند؛ اطلاعات مهم را بررسی کن.</div>
@@ -142,4 +146,4 @@ try{const res=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'ap
 catch(ex){pending.remove();err.textContent=ex.message||'خطا رخ داد. دوباره تلاش کن.';history.pop();}
 finally{send.disabled=false;send.textContent='ارسال';promptBox.focus();chat.scrollTop=chat.scrollHeight;}});
 promptBox.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();form.requestSubmit();}});
-</script></body></html>"""
+</script></body></html>\"\"\"
