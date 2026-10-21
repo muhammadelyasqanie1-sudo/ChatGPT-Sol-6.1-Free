@@ -77,9 +77,11 @@ async def chat(payload: ChatRequest):
         async with httpx.AsyncClient(timeout=45.0) as client:
             response = await client.post(
                 url,
-                params={"key": API_KEY},
                 json=body,
-                headers={"Content-Type": "application/json"},
+                headers={
+                    "Content-Type": "application/json",
+                    "x-goog-api-key": API_KEY,
+                },
             )
     except httpx.TimeoutException:
         raise HTTPException(status_code=504, detail="The AI provider timed out. Please try again.")
@@ -87,11 +89,17 @@ async def chat(payload: ChatRequest):
         raise HTTPException(status_code=502, detail="Could not connect to the AI provider.")
 
     if response.status_code >= 400:
+        # Log the provider diagnostic (never log the API key) to Railway Deploy Logs.
+        try:
+            provider_error = response.json().get("error", {}).get("message", "")
+        except (ValueError, AttributeError):
+            provider_error = ""
+        print(f"Gemini API error: HTTP {response.status_code}; {provider_error[:500]}")
         if response.status_code in (401, 403):
-            raise HTTPException(status_code=502, detail="The API key was rejected. Check Railway Variables.")
+            raise HTTPException(status_code=502, detail="Google Gemini rejected the API key or its permissions. Check the Gemini API key in Railway Variables and Google AI Studio.")
         if response.status_code == 429:
             raise HTTPException(status_code=429, detail="The AI provider rate limit or quota was reached.")
-        raise HTTPException(status_code=502, detail=f"AI provider returned HTTP {response.status_code}.")
+        raise HTTPException(status_code=502, detail=f"AI provider returned HTTP {response.status_code}. Check Railway Deploy Logs for the provider error.")
 
     try:
         data = response.json()
