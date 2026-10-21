@@ -105,7 +105,7 @@ async def chat(payload: ChatRequest):
     return {"reply": text, "model": MODEL}
 
 
-PAGE = r\"\"\"<!doctype html>
+PAGE = r"""<!doctype html>
 <html lang="fa" dir="rtl">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
@@ -146,4 +146,4 @@ try{const res=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'ap
 catch(ex){pending.remove();err.textContent=ex.message||'خطا رخ داد. دوباره تلاش کن.';history.pop();}
 finally{send.disabled=false;send.textContent='ارسال';promptBox.focus();chat.scrollTop=chat.scrollHeight;}});
 promptBox.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();form.requestSubmit();}});
-</script></body></html>\"\"\"
+</script></body></html>"""
