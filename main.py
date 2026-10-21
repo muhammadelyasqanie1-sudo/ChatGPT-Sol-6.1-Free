@@ -489,3 +489,54 @@ window.addEventListener('beforeinstallprompt',event=>{event.preventDefault();ins
 installButton.addEventListener('click',async()=>{if(!installPrompt)return;installPrompt.prompt();await installPrompt.userChoice;installPrompt=null;installButton.hidden=true;});
 window.addEventListener('appinstalled',()=>{installButton.hidden=true;installButton.textContent='برنامه نصب شد / Installed';installButton.hidden=false;});
 </script></body></html>"""
+
+
+@app.get("/manifest.webmanifest")
+async def pwa_manifest():
+    return JSONResponse({
+        "id": "/",
+        "name": "افغان AI — AFG AI",
+        "short_name": "AFG AI",
+        "description": "دستیار هوشمند فارسی/دری و انگلیسی افغانستان",
+        "lang": "fa",
+        "dir": "rtl",
+        "start_url": "/",
+        "scope": "/",
+        "display": "standalone",
+        "background_color": "#080d19",
+        "theme_color": "#0b1020",
+        "icons": [{"src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable"}],
+        "categories": ["productivity", "education", "utilities"]
+    })
+
+
+@app.get("/icon.svg")
+async def pwa_icon():
+    svg = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#182c52"/><stop offset="1" stop-color="#080d19"/></linearGradient></defs><rect width="512" height="512" rx="112" fill="url(#g)"/><path d="M256 68 290 180 404 146 337 244 444 304 322 314 330 438 256 340 182 438 190 314 68 304 175 244 108 146 222 180Z" fill="#a9b7ff" opacity=".18"/><text x="256" y="278" font-family="Arial,sans-serif" font-size="122" font-weight="800" text-anchor="middle" fill="#eef4ff">AFG</text><text x="256" y="355" font-family="Arial,sans-serif" font-size="62" font-weight="700" text-anchor="middle" fill="#61dfcb">AI</text></svg>"""
+    return Response(content=svg, media_type="image/svg+xml", headers={"Cache-Control": "public, max-age=86400"})
+
+
+@app.get("/sw.js")
+async def pwa_service_worker():
+    worker = """
+const CACHE = "afg-ai-shell-v1";
+const SHELL = ["/", "/manifest.webmanifest", "/icon.svg"];
+self.addEventListener("install", event => {
+  event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(SHELL)).then(() => self.skipWaiting()));
+});
+self.addEventListener("activate", event => {
+  event.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(key => key !== CACHE).map(key => caches.delete(key)))).then(() => self.clients.claim()));
+});
+self.addEventListener("fetch", event => {
+  const url = new URL(event.request.url);
+  if (event.request.method !== "GET" || url.origin !== self.location.origin || url.pathname.startsWith("/api/") || url.pathname === "/health" || url.pathname === "/sw.js") return;
+  event.respondWith(fetch(event.request).then(response => {
+    if (response.ok && (url.pathname === "/" || url.pathname === "/manifest.webmanifest" || url.pathname === "/icon.svg")) {
+      const copy = response.clone();
+      caches.open(CACHE).then(cache => cache.put(event.request, copy));
+    }
+    return response;
+  }).catch(async () => (await caches.match(event.request)) || (await caches.match("/"))));
+});
+"""
+    return Response(content=worker, media_type="application/javascript", headers={"Cache-Control": "no-cache", "Service-Worker-Allowed": "/"})
