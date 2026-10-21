@@ -10,7 +10,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.responses import HTMLResponse
 from pydantic import BaseModel, Field
 
-APP_NAME = "Sol AI"
+APP_NAME = "AFG AI"
 MODEL = os.getenv("GEMINI_MODEL", "gemini-flash-latest")
 API_KEY = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
 DATABASE_URL = os.getenv("DATABASE_URL", "").strip()
@@ -180,7 +180,7 @@ async def chat(payload: ChatRequest):
     ]
     body = {
         "system_instruction": {"parts": [{"text": (
-            "You are Sol AI, a helpful, honest, safety-conscious assistant. "
+            "You are AFG AI, a helpful, honest, safety-conscious assistant. "
             "Be clear and practical. Never claim to have performed actions you did not perform. "
             + language_instruction
         )}]},
@@ -272,7 +272,7 @@ PAGE = r"""<!doctype html>
 <html lang="fa" dir="rtl">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#0b1020"><title>Sol AI</title>
+<meta name="theme-color" content="#0b1020"><title>AFG AI</title>
 <style>
 :root{color-scheme:dark;--bg:#080d19;--panel:#101a2b;--line:#263650;--text:#eef4ff;--muted:#91a2bd;--accent:#a9b7ff;--teal:#61dfcb}
 *{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#172747,var(--bg) 62%);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--text);min-height:100vh}
@@ -282,11 +282,11 @@ main{min-width:0;display:flex;flex-direction:column;min-height:100vh;padding:0 2
 @media(max-width:760px){.app{display:block}aside{border-left:0;border-bottom:1px solid var(--line);padding:12px 14px;gap:10px}.aside-head{display:flex;align-items:center;justify-content:space-between}.brand{font-size:20px}.new{padding:9px 12px}.history-title,.db-note{display:none}.history{flex-direction:row;max-height:none}.history button{max-width:180px;flex:0 0 auto}main{min-height:70vh;padding:0 13px 12px}.top{padding:12px 0}.chat{padding:15px 0}.msg{max-width:96%}.welcome strong{font-size:22px}}
 </style></head>
 <body><div class="app">
-<aside><div class="aside-head"><div><div class="brand">✦ Sol AI</div><div class="sub">دستیار هوشمند · AI assistant</div></div><button class="new" id="newChat">＋ گفتگوی تازه</button></div>
+<aside><div class="aside-head"><div><div class="brand">✦ AFG AI</div><div class="sub">دستیار هوشمند · AI assistant</div></div><button class="new" id="newChat">＋ گفتگوی تازه</button></div>
 <div class="history-title">گفتگوهای قبلی / History</div><div class="history" id="history"></div>
 <div class="db-note" id="dbNote">گفتگوها پس از تنظیم PostgreSQL ذخیره می‌شوند. / History is saved when PostgreSQL is configured.</div></aside>
-<main><header class="top"><div><strong>Sol AI</strong><div class="sub">همراه هوشمند شما · Your AI companion</div></div><select id="lang" aria-label="Language"><option value="auto">خودکار / Auto</option><option value="fa">فارسی / دری</option><option value="en">English</option></select></header>
-<section id="chat" class="chat" aria-live="polite"><div class="welcome" id="welcome"><strong>سلام کاربر عزیز! 👋</strong>من Sol AI هستم. چه کمکی از دستم برمی‌آید؟<br>Hello! I'm Sol AI. How can I help?</div></section>
+<main><header class="top"><div><strong>AFG AI</strong><div class="sub">همراه هوشمند شما · Your AI companion</div></div><select id="lang" aria-label="Language"><option value="auto">خودکار / Auto</option><option value="fa">فارسی / دری</option><option value="en">English</option></select></header>
+<section id="chat" class="chat" aria-live="polite"><div class="welcome" id="welcome"><strong>سلام کاربر عزیز! 👋</strong>من AFG AI (هوش مصنوعی افغانستان) هستم. چه کمکی از دستم برمی‌آید؟<br>Hello! I'm AFG AI. How can I help?</div></section>
 <div id="error" class="error" role="status"></div>
 <form id="form" class="compose"><div class="entry"><textarea id="prompt" maxlength="12000" placeholder="پیامت را بنویس… / Type your message…" required></textarea><button class="send" id="send" type="submit">ارسال</button></div></form>
 <div class="foot">پاسخ‌های هوش مصنوعی ممکن است اشتباه باشند؛ اطلاعات مهم را بررسی کن.</div>
@@ -296,7 +296,7 @@ const chat=document.getElementById('chat'),form=document.getElementById('form'),
 const history=[],sessionKey='sol_ai_session_v2';
 let sessionId=localStorage.getItem(sessionKey);if(!sessionId){sessionId=crypto.randomUUID();localStorage.setItem(sessionKey,sessionId);}
 let conversationId=null;
-function clearChat(){chat.replaceChildren();const welcome=document.createElement('div');welcome.className='welcome';welcome.innerHTML='<strong>سلام کاربر عزیز! 👋</strong>من Sol AI هستم. چه کمکی از دستم برمی‌آید؟<br>Hello! I\\'m Sol AI. How can I help?';chat.appendChild(welcome);history.length=0;}
+function clearChat(){chat.replaceChildren();const welcome=document.createElement('div');welcome.className='welcome';welcome.innerHTML='<strong>سلام کاربر عزیز! 👋</strong>من AFG AI (هوش مصنوعی افغانستان) هستم. چه کمکی از دستم برمی‌آید؟<br>Hello! I\\'m AFG AI, Afghanistan's AI assistant. How can I help?';chat.appendChild(welcome);history.length=0;}
 function add(role,text){const el=document.createElement('div');el.className='msg '+role;el.textContent=text;chat.appendChild(el);chat.scrollTop=chat.scrollHeight;return el;}
 async function loadHistory(){try{const r=await fetch('/api/conversations?session_id='+encodeURIComponent(sessionId));if(!r.ok)throw new Error();const data=await r.json();historyBox.replaceChildren();dbNote.textContent='ذخیره‌سازی فعال است · Database connected';for(const c of data.conversations){const b=document.createElement('button');b.textContent=c.title||'گفتگوی تازه';b.title=b.textContent;b.className=String(c.id)===conversationId?'active':'';b.onclick=()=>openConversation(c.id);historyBox.appendChild(b);}}catch{dbNote.textContent='پس از تنظیم DATABASE_URL در PostgreSQL، تاریخچه فعال می‌شود.';}}
 async function openConversation(id){try{const r=await fetch('/api/conversations/'+encodeURIComponent(id)+'?session_id='+encodeURIComponent(sessionId));const data=await r.json();if(!r.ok)throw new Error(data.detail||'گفتگو باز نشد');conversationId=id;clearChat();chat.replaceChildren();for(const m of data.messages){history.push({role:m.role,content:m.content});add(m.role,m.content);}await loadHistory();}catch(e){err.textContent=e.message;}}
