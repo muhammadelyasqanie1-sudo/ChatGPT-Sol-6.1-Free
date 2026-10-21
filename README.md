@@ -1,6 +1,6 @@
-# ChatGPT-Sol-6.1-Free
+# AFG AI — هوش مصنوعی افغانستان
 
-Sol AI is a responsive bilingual Persian/Dari and English AI chat web app with PostgreSQL-backed conversation history.
+AFG AI (هوش مصنوعی افغانستان) is a responsive bilingual Persian/Dari and English AI chat web app with PostgreSQL-backed conversation history.
 
 ## Features
 - Responsive chat interface for mobile and desktop.
@@ -44,3 +44,9 @@ uvicorn main:app --host 0.0.0.0 --port 8000
 - `DELETE /api/conversations/{conversation_id}?session_id=<UUID>` — delete a conversation and its messages.
 
 Note: the current history ownership model uses an unguessable per-browser UUID, not a full user login system. Add authentication before storing sensitive personal conversations for multiple signed-in users.
+
+
+## نام و هویت برند
+- Brand name: **AFG AI**
+- فارسی/دری: **AFG AI — هوش مصنوعی افغانستان**
+- Tagline: **هوش مصنوعی افغانستان، برای همه | Afghanistan's AI, for everyone**
