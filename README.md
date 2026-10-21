@@ -1,9 +1,10 @@
 # AFG AI — هوش مصنوعی افغانستان
 
-AFG AI (هوش مصنوعی افغانستان) is a responsive bilingual Persian/Dari and English AI chat web app with PostgreSQL-backed conversation history.
+AFG AI (افغان AI / هوش مصنوعی افغانستان) is a responsive bilingual Persian/Dari and English AI assistant, designed as an installable Progressive Web App (PWA), with optional PostgreSQL-backed conversation history.
 
 ## Features
 - Responsive chat interface for mobile and desktop.
+- Installable PWA experience with app manifest, custom icon, install prompt, and cached app shell for opening the interface offline. AI replies and database operations still require a network connection.
 - Persian/Dari and English replies, with automatic language detection.
 - Gemini API key stays on the server; it is never sent to the browser.
 - PostgreSQL storage for conversations and messages.
@@ -13,6 +14,11 @@ AFG AI (هوش مصنوعی افغانستان) is a responsive bilingual Persia
 - Optional web search through Tavily, with source URLs included for the assistant.
 - Copy assistant replies and export the current conversation as a text file.
 - If PostgreSQL is not configured yet, the app can start and answer AI requests, but chat history is not saved.
+
+## Afghan AI app
+- Display name: **AFG AI · افغان AI**
+- The same codebase serves the web app and its installable PWA assets (`/manifest.webmanifest`, `/icon.svg`, `/sw.js`).
+- To install on a supported mobile browser, deploy over HTTPS, open the app, then use the browser's Install/Add to Home Screen option. Browser support varies.
 
 ## Railway setup
 Add these variables to the service when you are ready:
