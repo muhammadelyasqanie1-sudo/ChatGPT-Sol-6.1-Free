@@ -245,14 +245,14 @@ async def health():
     return {
         "status": "ok",
         "app": APP_NAME,
-        "model": AI_MODEL if selected_provider() == "compatible" else GEMINI_MODEL,\n        "provider": selected_provider(),
+        "model": AI_MODEL if selected_provider() == "compatible" else GEMINI_MODEL,
+        "provider": selected_provider(),
         "api_key_configured": selected_provider() != "none",
         "database_configured": bool(DATABASE_URL),
         "database_ready": DB_READY,
         "web_search_configured": bool(TAVILY_API_KEY),
         "file_analysis_available": True,
     }
-
 
 @app.get("/", response_class=HTMLResponse)
 async def home():
